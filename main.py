@@ -14,37 +14,40 @@ class Blog(db.Model):
     title = db.Column(db.String(120))
     body = db.Column(db.String(250))
 
-    def __init__(self, title, entry):
+    def __init__(self, title, body):
         self.title = title
-        self.entry = body
+        self.body = body
 
-
-@app.route('/blog', methods=['POST', 'GET'])
-def index():
+@app.route('/newpost', methods=['POST', 'GET'])
+def add_post():
 
     if request.method == 'POST':
-        blog_title = request.form['blog']
-        new_title = Blog(blog_title)
-        db.session.add(new_title)
+        blog_title = request.form['title']
+        body_entry = request.form['body']
+        new_entry = Blog(blog_title, body_entry)
+        db.session.add(new_entry)
         db.session.commit()
 
     blogs = Blog.query.all()
-    completed_tasks = Task.query.filter_by(completed=True).all()
-    return render_template('todos.html',title="Get It Done!", 
-        tasks=tasks, completed_tasks=completed_tasks)
+    return render_template('newpost.html', title="Build A Blog", blogs=blogs)
+
+    if request.method == 'GET':
+        return redirect('/blog')
 
 
-@app.route('/delete-task', methods=['POST'])
-def delete_task():
+@app.route('/blog', methods=['POST', 'GET'])
+def blog_list():
 
-    task_id = int(request.form['task-id'])
-    task = Task.query.get(task_id)
-    task.completed = True
-    db.session.add(task)
-    db.session.commit()
+    if request.method == 'POST':
+        blog_title = request.form['title']
+        body_entry = request.form['body']
+        new_entry = Blog(blog_title, body_entry)
+        db.session.add(new_entry)
+        db.session.commit()
 
-    return redirect('/')
-
+    blogs = Blog.query.all()
+    return render_template('blog.html', title="Build A Blog!", 
+        blogs=blogs)
 
 if __name__ == '__main__':
     app.run()
