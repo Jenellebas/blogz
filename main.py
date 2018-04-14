@@ -55,13 +55,21 @@ def blog_list():
         else:
             return render_template('newpost.html', title=blog_title, body=body_entry, title_error=title_error, body_error=body_error)
 
-    
-    blogs = Blog.query.all()
-    return render_template('blog.html', title="Build A Blog", 
-        blogs=blogs)
-    
     if request.method == 'GET':
-        return redirect('/blog')
+
+        if not request.args:
+            blogs = Blog.query.all()
+            return render_template('blog.html', title="Build A Blog", 
+            blogs=blogs)
+            
+            #return redirect('/blog')
+            
+        else:
+            blog_id = int(request.args.get('id'))
+            blog = Blog.query.get(blog_id)
+            title = blog.title
+            body = blog.body
+            return render_template('indivpost.html', title=title, body=body)
 
 if __name__ == '__main__':
     app.run()

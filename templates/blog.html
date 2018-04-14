@@ -5,14 +5,13 @@
     <h1 style="text-align: center">Build a Blog</h1>
     </p>
     
-    <br>    
     {% if blogs|length == 0 %}
     <p>No blogs yet</p>
     {% else %}
 
         <li>
             {% for blog in blogs %}
-            <li><h1>{{blog.title}}</h1></li>
+            <li><a href="blog?id={{blog.id}}"><h1>{{blog.title}}</h1></a></li>
             <li><h4>{{blog.body}}</h4></li>
             <hr />
             {% endfor %}
