@@ -1,14 +1,11 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <a href="blog">Main Blog Page</a> &nbsp;
-    <a href="newpost">Add a Blog Entry</a>
     <p>
     <h1 style="text-align: center">Build a Blog</h1>
     </p>
     
-    <br>
-    
+    <br>    
     {% if blogs|length == 0 %}
     <p>No blogs yet</p>
     {% else %}

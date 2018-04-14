@@ -27,13 +27,35 @@ def add_post():
 @app.route('/blog', methods=['POST', 'GET'])
 def blog_list():
 
+    title_error = ""
+    body_error = ""
+
     if request.method == 'POST':
         blog_title = request.form['title']
         body_entry = request.form['body']
         new_entry = Blog(blog_title, body_entry)
-        db.session.add(new_entry)
-        db.session.commit()
 
+        #if title is blank
+        if blog_title == "":
+            title_error = "Please enter a title."
+            blog_title = ""
+        
+        #if body is blank
+        if body_entry == "":
+            body_error = "Please enter a blog post."
+            body_entry = ""
+
+    #check to see if any errors 
+        if not title_error and not body_error:
+            db.session.add(new_entry)
+            db.session.commit()
+            blogs = Blog.query.all()
+            return render_template('blog.html', title="Build A Blog", 
+                blogs=blogs)
+        else:
+            return render_template('newpost.html', title=blog_title, body=body_entry, title_error=title_error, body_error=body_error)
+
+    
     blogs = Blog.query.all()
     return render_template('blog.html', title="Build A Blog", 
         blogs=blogs)
