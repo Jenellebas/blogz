@@ -49,9 +49,9 @@ def blog_list():
         if not title_error and not body_error:
             db.session.add(new_entry)
             db.session.commit()
-            blogs = Blog.query.all()
-            return render_template('blog.html', title="Build A Blog", 
-                blogs=blogs)
+            blog2 = new_entry.id
+            blog_id2 = str(blog2)
+            return redirect('/blog?id='+ blog_id2)
         else:
             return render_template('newpost.html', title=blog_title, body=body_entry, title_error=title_error, body_error=body_error)
 
@@ -61,8 +61,6 @@ def blog_list():
             blogs = Blog.query.all()
             return render_template('blog.html', title="Build A Blog", 
             blogs=blogs)
-            
-            #return redirect('/blog')
             
         else:
             blog_id = int(request.args.get('id'))
