@@ -13,13 +13,13 @@
     <p>No blogs yet</p>
     {% else %}
 
-        <ul>
+        <li>
             {% for blog in blogs %}
             <li><h1>{{blog.title}}</h1></li>
             <li><h4>{{blog.body}}</h4></li>
             <hr />
             {% endfor %}
-        </ul>
+        </li>
 
     {% endif %}
 

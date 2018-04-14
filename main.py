@@ -21,19 +21,8 @@ class Blog(db.Model):
 @app.route('/newpost', methods=['POST', 'GET'])
 def add_post():
 
-    if request.method == 'POST':
-        blog_title = request.form['title']
-        body_entry = request.form['body']
-        new_entry = Blog(blog_title, body_entry)
-        db.session.add(new_entry)
-        db.session.commit()
-
-    blogs = Blog.query.all()
-    return render_template('newpost.html', title="Build A Blog", blogs=blogs)
-
     if request.method == 'GET':
-        return redirect('/blog')
-
+       return render_template('newpost.html')
 
 @app.route('/blog', methods=['POST', 'GET'])
 def blog_list():
@@ -46,8 +35,11 @@ def blog_list():
         db.session.commit()
 
     blogs = Blog.query.all()
-    return render_template('blog.html', title="Build A Blog!", 
+    return render_template('blog.html', title="Build A Blog", 
         blogs=blogs)
+    
+    if request.method == 'GET':
+        return redirect('/blog')
 
 if __name__ == '__main__':
     app.run()
