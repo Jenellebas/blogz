@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <p>
+    <h1 style="text-align: left">Blog Authors</h1>
+    </p>
+    
+    {% if owners|length == 0 %}
+    <p>No blog posts yet</p>
+    {% else %}
+
+        <li>
+            {% for owner in owners %}
+            <li><h3>{{owner.username}}</h3></li>
+            
+            {% endfor %}
+        </li>
+
+    {% endif %}
+
+{% endblock %}
