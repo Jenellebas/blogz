@@ -13,7 +13,7 @@ class Blog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(120))
     body = db.Column(db.String(250))
-    owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))#name of the table in lowercase
 
     def __init__(self, title, body, owner):
         self.title = title
@@ -25,7 +25,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(120))
     password = db.Column(db.String(120))
-    blogs = db.relationship('Blog', backref='owner')
+    blogs = db.relationship('Blog', backref='owner') #name of class in python in uppercase
 
     def __init__(self, username, password):
         self.username = username
@@ -34,6 +34,10 @@ class User(db.Model):
 def get_current_userlist():
     return User.query.all()
 
+#def get_one_authors_blogs():
+    #owner_id = request.args.get(owner)
+   # return Blog.query.filter_by(owner_id=owner_id).all()
+   # print Blog.query.filter_by(owner_id=owner_id).all()
 
 @app.before_request
 def require_login():
@@ -172,8 +176,8 @@ def blog_list():
     if request.method == 'POST':
         blog_title = request.form['title']
         body_entry = request.form['body']
-        owner = User.query.filter_by(username=session['username']).first()
-        new_entry = Blog(blog_title, body_entry, owner)
+        blog_owner = User.query.filter_by(username=session['username']).first()
+        new_entry = Blog(blog_title, body_entry, blog_owner)
 
         #if title is blank
         if blog_title == "":
@@ -194,7 +198,7 @@ def blog_list():
             
             return redirect('/blog?id='+ blog_id2)
         else:
-            return render_template('newpost.html', title=blog_title, body=body_entry, owner=owner, title_error=title_error, body_error=body_error)
+            return render_template('newpost.html', title=blog_title, body=body_entry, owner=blog_owner, title_error=title_error, body_error=body_error)
 
     if request.method == 'GET':
         #we got here by clicking the All Posts link at the top
@@ -205,21 +209,21 @@ def blog_list():
         else:    
         #if clicking Title of blog entry on /blog page
             if request.args.get('id'):
-                blog_id = int(request.args.get('id'))
-                blog = Blog.query.get(blog_id)
+                blog_id = int(request.args.get('id'))#get the id of the specific blog requested by user
+                blog = Blog.query.get(blog_id) #get the full record with that id
                 title = blog.title
                 body = blog.body
-                owner = blog.owner.username
+                owner = blog.owner.username # get the username of the owner of the blog based on Foreign key
                 return render_template('indivpost.html', title=title, body=body, owner=owner)
 
         #if clicking written by Name on blog entry on /blog page 
-            if request.args.get('owner'):
-                owner_id2 = request.args.get('owner')
-                blogs = Blog.query.filter_by(owner_id=owner_id2).all()
+            if request.args.get('user'):
+                username2 = request.args.get('user') #gets username based on link clicked and assigns to variable
+                owner_record = User.query.filter_by(username=username2).first() #get record where username is 
+                owner_id = owner_record.id
+                blogs = Blog.query.filter_by(owner_id=owner_id).all()
                 return render_template('indivauthor.html', blogs=blogs)
                 
-
-
 @app.route('/')
 def index():
     list_of_owners = User.query.all()
