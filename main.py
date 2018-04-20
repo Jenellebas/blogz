@@ -168,6 +168,7 @@ def blog_list():
     title_error = ""
     body_error = ""
 
+    #if we got to this page by clicking the button to add a new post (form action/blog button)
     if request.method == 'POST':
         blog_title = request.form['title']
         body_entry = request.form['body']
@@ -184,37 +185,44 @@ def blog_list():
             body_error = "Please enter a blog post."
             body_entry = ""
 
-    #check to see if any errors 
+    #check to see if any errors and if not, add the new entry as a new page with query 
         if not title_error and not body_error:
             db.session.add(new_entry)
             db.session.commit()
             blog2 = new_entry.id
             blog_id2 = str(blog2)
-            return redirect('/blog?id='+ blog_id2)
+            username2 = new_entry.username
+            return redirect('/blog?id='+ blog_id2, owner=username2)
         else:
             return render_template('newpost.html', title=blog_title, body=body_entry, owner=owner, title_error=title_error, body_error=body_error)
 
     if request.method == 'GET':
-
+        #we got here by clicking the All Posts link at the top
         if not request.args:
             blogs = Blog.query.all()
-            #####username = User.username == blogs.owner_id
             return render_template('blog.html', title="Build A Blog", blogs=blogs)
-            ###, username=username)
             
-        else:
-            blog_id = int(request.args.get('id'))
-            blog = Blog.query.get(blog_id)
-            title = blog.title
-            body = blog.body
-            owner = blog.owner_id
-            return render_template('indivpost.html', title=title, body=body, owner=owner)
+        else:    
+        #if clicking Title of blog entry on /blog page
+            if request.args.get('id'):
+                blog_id = int(request.args.get('id'))
+                blog = Blog.query.get(blog_id)
+                title = blog.title
+                body = blog.body
+                owner = blog.owner_id
+                return render_template('indivpost.html', title=title, body=body, owner=owner)
+
+        #if clicking written by Name on blog entry on /blog page 
+            if request.args.get('owner'):
+                owner_id = request.args.get('owner')
+                blog = Blog.query.filter_by(owner_id = owner_id).all()
+                return render_template('indivauthor.html')
+                
 
 
 @app.route('/')
 def index():
     list_of_owners = User.query.all()
-    #each_owner_name = list_of_owners.username
     return render_template('index.html', owners=list_of_owners)
 
 if __name__ == '__main__':
