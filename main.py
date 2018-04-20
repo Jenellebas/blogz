@@ -191,8 +191,8 @@ def blog_list():
             db.session.commit()
             blog2 = new_entry.id
             blog_id2 = str(blog2)
-            username2 = new_entry.username
-            return redirect('/blog?id='+ blog_id2, owner=username2)
+            
+            return redirect('/blog?id='+ blog_id2)
         else:
             return render_template('newpost.html', title=blog_title, body=body_entry, owner=owner, title_error=title_error, body_error=body_error)
 
@@ -209,14 +209,14 @@ def blog_list():
                 blog = Blog.query.get(blog_id)
                 title = blog.title
                 body = blog.body
-                owner = blog.owner_id
+                owner = blog.owner.username
                 return render_template('indivpost.html', title=title, body=body, owner=owner)
 
         #if clicking written by Name on blog entry on /blog page 
             if request.args.get('owner'):
-                owner_id = request.args.get('owner')
-                blog = Blog.query.filter_by(owner_id = owner_id).all()
-                return render_template('indivauthor.html')
+                owner_id2 = request.args.get('owner')
+                blogs = Blog.query.filter_by(owner_id=owner_id2).all()
+                return render_template('indivauthor.html', blogs=blogs)
                 
 
 
